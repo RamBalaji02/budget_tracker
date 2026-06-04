@@ -1,39 +1,21 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from app.core.deps import get_current_user, get_db
+from app.services.summary_service import get_summary
 
-from app.db.database import SessionLocal
-from app.models.expense import Expense
-from app.models.income import Income
-from app.core.deps import get_current_user
-
-router = APIRouter()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+router = APIRouter(tags=["Summary"])
 
 
 @router.get("/summary")
-def summary(db: Session = Depends(get_db),
-            user_id: int = Depends(get_current_user)):
-
+def summary(
+    month: str = None,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user)
+):
     try:
-        expenses = db.query(Expense).filter(Expense.user_id == user_id).all()
-        income = db.query(Income).filter(Income.user_id == user_id).all()
-
-        total_expense = sum(float(e.amount or 0) for e in expenses)
-        total_income = sum(float(i.amount or 0) for i in income)
-
-        return {
-            "total_income": total_income,
-            "total_expense": total_expense,
-            "balance": total_income - total_expense
-        }
-
+        return get_summary(db, user_id, month=month)
     except Exception as e:
-        # 🔥 IMPORTANT: show real error instead of 500 crash
-        return {"error": str(e)}
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
