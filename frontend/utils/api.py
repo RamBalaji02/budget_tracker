@@ -1,6 +1,6 @@
 import requests
 
-BASE_URL = "https://budget-tracker-1-ag9j.onrender.com/"
+BASE_URL = "https://budget-tracker-1-ag9j.onrender.com"
 
 
 def get(endpoint, token=None):
@@ -13,16 +13,22 @@ def get(endpoint, token=None):
 
 
 def post(endpoint, data=None, token=None):
-    headers = {}
+    headers = {
+        "Content-Type": "application/json"
+    }
 
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
-    return requests.post(BASE_URL + endpoint, json=data, headers=headers)
+    return requests.post(
+        BASE_URL + endpoint,
+        json=data,
+        headers=headers
+    )
 
 
 def put(endpoint, data=None, token=None):
-    headers = {}
+    headers = {"Content-Type": "application/json"}
 
     if token:
         headers["Authorization"] = f"Bearer {token}"
