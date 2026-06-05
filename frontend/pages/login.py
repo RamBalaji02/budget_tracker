@@ -5,7 +5,6 @@ st.title("🔐 Expense Tracker")
 
 tab1, tab2 = st.tabs(["Login", "Register"])
 
-# ---------------- LOGIN ----------------
 with tab1:
     st.subheader("Login")
 
@@ -28,7 +27,7 @@ with tab1:
             except:
                 st.error("Login failed")
 
-# ---------------- REGISTER ----------------
+
 with tab2:
     st.subheader("Register")
 

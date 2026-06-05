@@ -9,22 +9,29 @@ from app.core.security import get_password_hash, verify_password, create_token
 router = APIRouter()
 
 @router.post("/register")
-def register(data: UserCreate, db: Session = Depends(get_db)):
+def register(data: dict, db: Session = Depends(get_db)):
 
-    user = db.query(User).filter(User.username == data.username).first()
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return {"detail": "Missing fields"}
+
+    user = db.query(User).filter(User.username == username).first()
+
     if user:
-        raise HTTPException(status_code=400, detail="User already exists")
+        return {"detail": "User already exists"}
 
     new_user = User(
-        username=data.username,
-        password=get_password_hash(data.password)
+        username=username,
+        password=password
     )
 
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
-    return {"message": "User created"}
+    return {"message": "registered"}
 
 
 @router.post("/login")
