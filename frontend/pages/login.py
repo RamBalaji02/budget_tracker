@@ -14,7 +14,7 @@ with tab1:
         if not login_user or not login_pass:
             st.error("Please fill in all fields")
         else:
-            res = post("/login", {
+            res = post("/auth/login", {
                 "username": login_user,
                 "password": login_pass
             })
@@ -42,7 +42,7 @@ with tab2:
         elif reg_pass != reg_confirm:
             st.error("Passwords do not match")
         else:
-            res = post("/register", {
+            res = post("/auth/register", {
                 "username": reg_user,
                 "password": reg_pass
             })
