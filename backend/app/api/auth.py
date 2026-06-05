@@ -7,7 +7,7 @@ from app.schemas.user import UserCreate
 
 router = APIRouter(tags=["Authentication"])
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+post("/register", status_code=status.HTTP_201_CREATED)
 def register(data: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.username == data.username).first()
     if db_user:
@@ -28,7 +28,7 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
     return {"message": "User registered successfully", "user_id": new_user.id}
 
 
-@router.post("/login")
+post("/login")
 def login(data: dict, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == data.get("username")).first()
 
