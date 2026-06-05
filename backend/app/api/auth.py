@@ -1,24 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.models.user import User
-from app.core.security import create_token, verify_password, get_password_hash
 from app.core.deps import get_db
 from app.schemas.user import UserCreate
+from app.core.security import get_password_hash, verify_password, create_token
 
-router = APIRouter(tags=["Authentication"])
+router = APIRouter()
 
-
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+@router.post("/register")
 def register(data: UserCreate, db: Session = Depends(get_db)):
 
-    db_user = db.query(User).filter(User.username == data.username).first()
-
-    if db_user:
-        raise HTTPException(
-            status_code=400,
-            detail="Username already registered"
-        )
+    user = db.query(User).filter(User.username == data.username).first()
+    if user:
+        raise HTTPException(status_code=400, detail="User already exists")
 
     new_user = User(
         username=data.username,
@@ -29,27 +24,17 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
 
-    return {"message": "User registered successfully"}
+    return {"message": "User created"}
 
 
 @router.post("/login")
-def login(data: dict, db: Session = Depends(get_db)):
+def login(data: UserCreate, db: Session = Depends(get_db)):
 
-    username = data.get("username")
-    password = data.get("password")
+    user = db.query(User).filter(User.username == data.username).first()
 
-    if not username or not password:
-        raise HTTPException(status_code=400, detail="Missing username or password")
-
-    user = db.query(User).filter(User.username == username).first()
-
-    if not user or not verify_password(password, user.password):
+    if not user or not verify_password(data.password, user.password):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
     token = create_token({"user_id": user.id})
 
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-        "user_id": user.id
-    }
+    return {"access_token": token}

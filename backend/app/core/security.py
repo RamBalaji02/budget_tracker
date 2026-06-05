@@ -1,14 +1,14 @@
-from datetime import datetime, timedelta
 from jose import jwt
+from datetime import datetime, timedelta
 
 SECRET_KEY = "secret123"
 ALGORITHM = "HS256"
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return plain_password == hashed_password
+def get_password_hash(password: str):
+    return password  # simple for now
 
-def get_password_hash(password: str) -> str:
-    return password
+def verify_password(plain, hashed):
+    return plain == hashed
 
 def create_token(data: dict):
     payload = data.copy()
