@@ -3,7 +3,7 @@ from utils.api import get
 import pandas as pd
 import plotly.express as px
 from datetime import datetime
-
+import plotly.express as px
 st.set_page_config(page_title="Dashboard", page_icon="📊", layout="wide")
 
 st.title("📊 Expense Tracker Dashboard")

@@ -1,2 +1,10 @@
+fastapi
+uvicorn
+sqlalchemy
+python-dotenv
+pydantic
+psycopg2-binary
+python-jose
 streamlit
 requests
+plotly
