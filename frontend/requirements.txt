@@ -7,4 +7,6 @@ psycopg2-binary
 python-jose
 streamlit
 requests
+pandas
+numpy
 plotly
